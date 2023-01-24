@@ -132,15 +132,16 @@ struct commandLine* commandPrompt(struct commandLine* cl){
       command[0] = holder[0];
       //printf("%s",*command);
       i = 1;
-      isCommand = true;
+      //isCommand = true;
 
     }
   }
 
 
   // parse remander input into arguments array, check for redirections and background options
+  int last_val_indx = 0;
   for (int i=0; i < 512; i++){
-
+    
      // user holder as a variable to compare strings, if the value in holder is NULL no more arguments
      // exist and we check to see if the last argument is "&" if so we run the 
      // the boolean variable background is true. Holder is also compared to "<" and ">" 
@@ -152,10 +153,13 @@ struct commandLine* commandPrompt(struct commandLine* cl){
      holder[0] = strtok(NULL, " ");
      
      // reached the end of the string  
+     
      if(holder[0] == NULL){
-          // check if the last value read is a background command, if so set the background variable to true and
+        
+         // check if the last value read is a background command, if so set the background variable to true and
          // decrement the argCount, remove the ampersand sign.
-        if(argCount > 0 && strcmp(arguments[argCount - 1], "&") == 0  ){
+        
+        if(argCount > 0 && strcmp(arguments[last_val_indx], "&") == 0  ){
           
           arguments[i-1] = NULL;
           argCount -= 1;
@@ -166,30 +170,34 @@ struct commandLine* commandPrompt(struct commandLine* cl){
         else{
           arguments[i] = NULL;
         }
-        break;
-        
+        break;  
      }
 
      // check for file redirection
-     else if(strcmp(holder[0], "<") == 0) {
+    else if(strcmp(holder[0], "<") == 0 ){
         redirIn = true;
+        last_val_indx +=1;
      } 
      else if (strcmp(holder[0], ">")== 0 ){
         redirOut = true;
+        last_val_indx += 1;
      }
      else if (redirIn) {
         inFileName[0] = holder[0];
         redirIn = false;
+        last_val_indx += 1;
      }
      else if (redirOut){
         outFileName[0] = holder[0];
         redirOut = false;
+        last_val_indx += 1;
      }
 
      // if just a normal command continue through loop, incrementing the argCound value.
      else{
        arguments[i] = holder[0];
        argCount ++;
+       last_val_indx += 1;
       }
   }
 
@@ -228,9 +236,9 @@ struct commandLine* commandPrompt(struct commandLine* cl){
        }
      }
 
+  printf("command = %s, args = %s", command[0], *args );
 
-
-  cl = createCommand(command[0], *args, inFileName[0], outFileName[0], argCount, background);
+  //cl = createCommand(command[0], *args, inFileName[0], outFileName[0], argCount, background);
   return cl;
 
 }
@@ -238,24 +246,37 @@ struct commandLine* commandPrompt(struct commandLine* cl){
 
 int main(int argc, char *argv[]){
   // keeps track of background processes, the processess variable tells us how many processses and the pid array makes it easy to
+  
+  /*
+
   // kill a process.
   int processes = 0;
   int *pids[5] = {0,0,0,0,0};
   // reallocate pids
   int childStatus;
   bool leave = false;
+    
   
+  */
+
+  /*
+
   // initialize parent process signal hadlers
   struct sigaction ignore_SIGINT={}, SIGSTP_action={};
 
   ignore_SIGINT.sa_handler = SIG_IGN;
 
-  sigaction(SIGINT, &ignore_SIGINT, NULL);
+  sigaction(SIGINT, &ignore_SIGINT, NULL);  
+  
+  
+  */
+
 
   // loop starts here
 
 LOOP:for(;;) {
-    
+
+  /*
     if(processes > 0){
       // check background processes for termination at the start of the loop
       for(int i = 0; i < sizeof(pids); i++){ 
@@ -272,7 +293,10 @@ LOOP:for(;;) {
           }
         }
       }
-    }
+    }  
+  */  
+
+
     /* initialize command line struct variable as cl, cl will be a pointer to the command line structure that will 
      * hold the command, arguments, redirect files and background status. The commandPrompt(struct commandLine) function
      * takes a commandLine structure as a parameter and returns a commandLine structure with values assigned to the
@@ -302,8 +326,9 @@ LOOP:for(;;) {
         }
       }
     }
+  /*
   
-    /* built in funtions (function that takes cl-> command and checks command for exit, status, cd then sends it to exit, status, cd */
+    // built in funtions (function that takes cl-> command and checks command for exit, status, cd then sends it to exit, status, cd 
     
     // exit will check for background processes, if no background process, exit normally. If there are background processes, send them the
     // termination signal and exit. 
@@ -337,7 +362,10 @@ LOOP:for(;;) {
         fflush(stdin);
         continue;
       }
-    }
+    }  
+  
+  */
+
 
 
     // cd built in command check
@@ -376,7 +404,7 @@ LOOP:for(;;) {
         }
       }
      }
-    
+    /*
     // fork child process
     else{   
       
@@ -487,7 +515,10 @@ LOOP:for(;;) {
           child = waitpid(child, &childStatus, 0);      
         }  
       }  
-    }
+    }    
+    
+    */
+
   
 
   // free cl structure memory allocation

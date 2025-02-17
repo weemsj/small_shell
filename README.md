@@ -27,7 +27,7 @@ A C compiler (like gcc).
 
 ### Building the Shell
 Clone this repository:
-`git clone <repository-url>`
+`git clone https://github.com/weemsj/small_shell.git`
 
 ### Navigate into the project directory:
 cd smallsh
